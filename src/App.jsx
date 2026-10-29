@@ -1191,16 +1191,21 @@ function EventDetailModal({ event, onClose }) {
           </section>
 
           {/* Section 4: Analyst Notes */}
+          {/* Section 4: Analyst Notes */}
           <section className="dossier-block">
-            <h3 className="block-title">4. Analyst Working Log (Session Only)</h3>
+            <h3 className="block-title">4. Investigation Notes</h3>
             <textarea
-              className="analyst-textarea"
-              placeholder="Record hypotheses, primary contact details, laboratory confirmation status, or peer findings..."
-              value={analystNotes}
-              onChange={(e) => setAnalystNotes(e.target.value)}
-              rows={3}
-            />
+            className="analyst-textarea"
+            placeholder="What did you verify? What remains uncertain? What should happen next?"
+            value={analystNotes}
+            onChange={(e) => setAnalystNotes(e.target.value)}
+            rows={3}
+          />
+          <p className="block-text">
+          Notes are currently saved for this session.
+          </p>
           </section>
+
 
           {/* Section 5: Cited Reports */}
           <section className="dossier-block">
