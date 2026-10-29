@@ -13,6 +13,13 @@ const navigation = [
   { label: 'About', icon: 'i' },
 ]
 
+const topicRules = [
+  { label: 'Respiratory', keywords: ['respiratory', 'pneumonia', 'influenza', 'coronavirus', 'covid'] },
+  { label: 'Viral', keywords: ['virus', 'viral', 'ebola', 'nipah', 'measles'] },
+  { label: 'Vector-borne', keywords: ['malaria', 'dengue', 'yellow fever', 'mosquito'] },
+  { label: 'Food/water', keywords: ['cholera', 'foodborne', 'waterborne'] },
+]
+
 const emptyDashboard = {
   schemaVersion: '2.0', dataMode: 'unavailable', source: 'WHO Disease Outbreak News', sourceUrl: 'https://www.who.int/emergencies/disease-outbreak-news', fetchedAt: null,
   summary: { retrievedPublications: 0, sourceStatus: 'unavailable', dataFreshness: null }, trend: null, locations: [], reports: [], alerts: [], limitations: [],
@@ -28,6 +35,11 @@ function formatTimestamp(value) {
   if (!value) return 'Unavailable'
   const date = new Date(value)
   return Number.isNaN(date.getTime()) ? 'Unavailable' : date.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })
+}
+
+function extractedKeywords(title) {
+  const normalizedTitle = title.toLowerCase()
+  return topicRules.filter((rule) => rule.keywords.some((keyword) => normalizedTitle.includes(keyword))).map((rule) => rule.label)
 }
 
 async function fetchDashboard(forceRefresh = false) {
@@ -60,8 +72,17 @@ function LiveIntelligenceView({ reports, state, error, sourceUrl }) {
   return <><section className="view-heading"><div><span className="section-kicker">LIVE INTELLIGENCE</span><h2>WHO Disease Outbreak News</h2><p>Official publication metadata only. Open each report at WHO for the authoritative content.</p></div><span className="live-tag">LIVE SOURCE DATA</span></section>{state !== 'success' ? <Notice state={state} error={error} /> : reports.length === 0 ? <div className="panel empty-state large">WHO returned no publications in the current response. <a href={sourceUrl} target="_blank" rel="noreferrer">Check the official source.</a></div> : <div className="report-grid">{reports.map((report) => <article className="panel report-card" key={report.url}><div className="report-card-top"><span className="report-date">{formatDate(report.publicationDate)}</span><span className="source-chip">WHO DON</span></div><h3>{report.title}</h3><p>{report.location || 'Location not provided by source'}</p><a className="source-link" href={report.url} target="_blank" rel="noreferrer">Read official publication <span>↗</span></a></article>)}</div>}</>
 }
 
-function SignalMonitoringView() {
-  return <><section className="view-heading"><div><span className="section-kicker">SIGNAL MONITORING</span><h2>Explainable signal framework</h2><p>A transparent framework for future evidence review, without claiming live incidence.</p></div><span className="demo-tag">NO LIVE SIGNALS</span></section><div className="framework-grid"><article className="panel framework-card"><span className="framework-number">01</span><h3>Source evidence</h3><p>Review WHO publication title, date, official URL, and any source-supported location before forming a question.</p></article><article className="panel framework-card"><span className="framework-number">02</span><h3>Context check</h3><p>Compare a signal with local surveillance and primary evidence. Publication volume alone is not a signal of incidence.</p></article><article className="panel framework-card"><span className="framework-number">03</span><h3>Human review</h3><p>Record uncertainty, competing explanations, and limitations. No automated alert is issued by this stage.</p></article></div><div className="panel limitation-panel"><span className="section-kicker">LIMITATIONS</span><h3>What this view does not do</h3><ul><li>It does not estimate cases, severity, risk, or transmission.</li><li>It does not convert WHO publications into alerts.</li><li>It does not replace official guidance or local public-health surveillance.</li></ul></div></>
+function SignalMonitoringView({ reports, state, error, sourceUrl }) {
+  const [search, setSearch] = useState('')
+  const [selectedTopic, setSelectedTopic] = useState('All topics')
+  const filteredReports = reports.filter((report) => {
+    const matchesSearch = report.title.toLowerCase().includes(search.trim().toLowerCase())
+    const keywords = extractedKeywords(report.title)
+    return matchesSearch && (selectedTopic === 'All topics' || keywords.includes(selectedTopic))
+  })
+  const topicOptions = ['All topics', ...topicRules.map((rule) => rule.label)]
+
+  return <><section className="view-heading"><div><span className="section-kicker">SIGNAL MONITORING</span><h2>Search source evidence</h2><p>Filter real WHO publication titles without inferring incidence, severity, or outbreak status.</p></div><span className="live-tag">LIVE SOURCE DATA</span></section><div className="panel monitoring-panel"><div className="monitoring-controls"><label htmlFor="report-search">Search titles<input id="report-search" type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Try a disease or topic keyword" /></label><label htmlFor="topic-filter">Topic filter<select id="topic-filter" value={selectedTopic} onChange={(event) => setSelectedTopic(event.target.value)}>{topicOptions.map((topic) => <option key={topic}>{topic}</option>)}</select></label></div><p className="filter-note"><strong>Extracted keywords are title-based labels, not confirmed facts.</strong> Showing {filteredReports.length} of {reports.length} WHO publications.</p></div>{state !== 'success' ? <Notice state={state} error={error} /> : reports.length === 0 ? <div className="panel empty-state large">WHO returned no publications. <a href={sourceUrl} target="_blank" rel="noreferrer">Check the official source.</a></div> : filteredReports.length === 0 ? <div className="panel empty-state large">No WHO publication titles match the current search and topic filter.</div> : <div className="report-grid">{filteredReports.map((report) => <article className="panel report-card" key={report.url}><div className="report-card-top"><span className="report-date">{formatDate(report.publicationDate)}</span><span className="source-chip">WHO DON</span></div><h3>{report.title}</h3><p>Location: {report.location || 'Not provided by source'}</p><div className="keyword-area"><span className="keyword-label">EXTRACTED KEYWORDS</span>{extractedKeywords(report.title).length ? extractedKeywords(report.title).map((keyword) => <span className="keyword-chip" key={keyword}>{keyword}</span>) : <span className="keyword-none">No recognized title keyword</span>}</div><a className="source-link" href={report.url} target="_blank" rel="noreferrer">Read official publication <span>↗</span></a></article>)}</div>}<div className="framework-grid monitoring-framework"><article className="panel framework-card"><span className="framework-number">01</span><h3>Source evidence</h3><p>Review the publication title, available date, and official URL before forming a question.</p></article><article className="panel framework-card"><span className="framework-number">02</span><h3>Context check</h3><p>Topic labels are derived only from words in the title; they are not independent classifications.</p></article><article className="panel framework-card"><span className="framework-number">03</span><h3>Human review</h3><p>Record uncertainty and limitations. This view does not create alerts or epidemiological estimates.</p></article></div></>
 }
 
 function AlertsView() {
@@ -109,7 +130,7 @@ function App() {
 
   const renderView = () => {
     if (activePage === 'Live Intelligence') return <LiveIntelligenceView reports={dashboard.reports} state={requestState} error={requestError} sourceUrl={dashboard.sourceUrl} />
-    if (activePage === 'Signal Monitoring') return <SignalMonitoringView />
+    if (activePage === 'Signal Monitoring') return <SignalMonitoringView reports={dashboard.reports} state={requestState} error={requestError} sourceUrl={dashboard.sourceUrl} />
     if (activePage === 'Alerts & Investigations') return <AlertsView />
     if (activePage === 'Simulation Lab') return <SimulationView />
     if (activePage === 'About') return <AboutView />
