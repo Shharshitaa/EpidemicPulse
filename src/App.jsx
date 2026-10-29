@@ -421,9 +421,17 @@ async function fetchEvents(forceRefresh = false, fallbackRecords = []) {
 function BrandMark() {
   return (
     <span className="brand-mark" aria-hidden="true">
-      <span />
-      <span />
-      <span />
+      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="16" cy="16" r="13.5" stroke="currentColor" strokeWidth="1.5" />
+        <path
+          d="M5.5 16h5l2.4-5.2 4.1 10.4 3.2-7.1 2.1 4.1h4.2"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <circle cx="22.3" cy="18.2" r="1.4" fill="#e68183" />
+      </svg>
     </span>
   )
 }
@@ -500,12 +508,22 @@ function OverviewView({ reports = [], state, error, onRefresh, onExplore, source
 
   return (
     <div className="workspace-view">
+      <div className="view-header-strip overview-page-heading">
+        <div>
+          <span className="workstation-kicker">GLOBAL SURVEILLANCE WORKSPACE</span>
+          <h2 className="view-title">Surveillance Overview</h2>
+          <p className="view-desc">
+            A live view of public-health publications and potential signals for human review. Report volume is not a measure of infections.
+          </p>
+        </div>
+      </div>
+
       {/* Top Banner Ticker */}
       <div className="alert-ticker-strip">
-        <span className="ticker-badge">CRITICAL SIGNALS</span>
+        <span className="ticker-badge">SIGNALS FOR REVIEW</span>
         <div className="ticker-text">
           {events.length > 0
-            ? `Active Outbreak Cluster: ${events[0].disease} (${events[0].country}) — ${events[0].reportCount} dispatches across ${events[0].distinctSourceCount} surveillance networks.`
+            ? `Potential signal cluster: ${events[0].disease} (${events[0].country}) — ${events[0].reportCount} reports across ${events[0].distinctSourceCount} surveillance networks.`
             : 'Operational monitoring active across integrated public-health feeds.'}
         </div>
         <button className="ticker-action-btn" onClick={() => onExplore('Alerts & Investigations')}>
@@ -525,23 +543,23 @@ function OverviewView({ reports = [], state, error, onRefresh, onExplore, source
           tone="green"
         />
         <StatTile
-          label="INDEPENDENTLY CORROBORATED"
+          label="INDEPENDENT SOURCE GROUPS"
           value={eventsState === 'success' ? independentCount : '—'}
-          subtext="Confirmed by 2+ distinct networks"
-          statusPill="Cross-Verified"
+          subtext="Reported by 2+ distinct networks; not outbreak confirmation"
+          statusPill="Multi-source"
           tone="blue"
         />
         <StatTile
           label="SOURCE CONNECTIVITY"
           value={sourceState === 'success' ? `${liveCount} / ${sources.length || 7}` : '—'}
-          subtext="Live adapters | 3 restricted"
+          subtext="Connected source adapters"
           statusPill={liveCount >= 3 ? 'Operational' : 'Partial'}
           tone={liveCount >= 3 ? 'green' : 'amber'}
         />
         <StatTile
           label="LATEST INGESTION"
           value={latestDate ? formatDate(latestDate) : '—'}
-          subtext="Most recent official bulletin"
+          subtext="Most recent publication in the feed"
           statusPill="Fresh"
           tone="slate"
         />
@@ -552,9 +570,9 @@ function OverviewView({ reports = [], state, error, onRefresh, onExplore, source
         <div className="panel-header-row">
           <div>
             <span className="workstation-kicker">CROSS-SOURCE CORRELATION ENGINE</span>
-            <h3 className="panel-title">Active Outbreak Event Clusters</h3>
+            <h3 className="panel-title">Potential Signal Clusters</h3>
             <p className="panel-subtext">
-              Automated heuristics cluster dispatches by pathogen token and territory. Reports sharing identical syntax are marked as syndicated wire copies.
+              Reports are grouped by pathogen and territory to support analyst review. Similar or syndicated reports are not independent confirmation of an outbreak.
             </p>
           </div>
           <div className="panel-header-actions">
@@ -571,7 +589,7 @@ function OverviewView({ reports = [], state, error, onRefresh, onExplore, source
 
         {events.length === 0 ? (
           <div className="empty-state-card">
-            No correlated outbreak clusters currently identified. Awaiting fresh dispatches.
+            No potential signal clusters currently identified. Awaiting fresh dispatches.
           </div>
         ) : (
           <div className="clusters-matrix-grid">
@@ -891,7 +909,7 @@ function SignalMonitoringView({ reports = [], events = [] }) {
           <span className="workstation-kicker">GEOSPATIAL SIGNAL SURVEILLANCE</span>
           <h2 className="view-title">Signal Monitoring</h2>
           <p className="view-desc">
-            Geographic outbreak signals mapped to national centroid approximations. Select any pin to inspect the underlying surveillance evidence.
+            Geographic signal groups mapped to national centroid approximations. Select any pin to inspect the underlying surveillance evidence.
           </p>
         </div>
         <div className="map-view-switcher">
@@ -1241,7 +1259,7 @@ function AlertsView({ events = [], eventsState, eventsError, onRefresh }) {
           <span className="workstation-kicker">OPERATIONAL EPIDEMIOLOGY WORKSPACE</span>
           <h2 className="view-title">Alerts & Investigations</h2>
           <p className="view-desc">
-            Correlated outbreak clusters requiring human cross-examination. Review corroboration levels, track active investigation state, and identify evidence gaps.
+            Potential signal clusters grouped for analyst review. Compare source corroboration, track investigation status, and identify evidence gaps.
           </p>
         </div>
         <button className="workstation-btn primary" onClick={() => onRefresh(true)}>
@@ -1252,7 +1270,7 @@ function AlertsView({ events = [], eventsState, eventsError, onRefresh }) {
       {/* Filter Tabs Bar */}
       <div className="investigations-filter-tabs">
         {[
-          ['all', 'All Outbreak Clusters', events.length],
+          ['all', 'All Signal Clusters', events.length],
           ['independent', 'Independently Corroborated', events.filter((e) => e.corroborationLevel === 'independent').length],
           ['syndicated', 'Wire Syndication', events.filter((e) => e.corroborationLevel === 'syndicated').length],
           ['single-source', 'Single Source Dispatches', events.filter((e) => e.corroborationLevel === 'single-source').length],
@@ -1281,7 +1299,7 @@ function AlertsView({ events = [], eventsState, eventsError, onRefresh }) {
 
       {filtered.length === 0 ? (
         <div className="workstation-panel empty-state-card">
-          No outbreak clusters found for this filter level.
+          No potential signal clusters found for this filter level.
           <button className="workstation-btn ghost" onClick={() => setFilterLevel('all')}>Show all clusters</button>
         </div>
       ) : (

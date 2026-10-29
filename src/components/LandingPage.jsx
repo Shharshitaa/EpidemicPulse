@@ -85,6 +85,26 @@ function HumanDossierIcon() {
   )
 }
 
+function SignalMapIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="feat-icon-svg" aria-hidden="true">
+      <path d="M3 6.5 8.5 4l7 2.5L21 4v13.5L15.5 20l-7-2.5L3 20z" />
+      <path d="M8.5 4v13.5M15.5 6.5V20" />
+      <circle cx="12" cy="11" r="2" />
+      <path d="M12 13v2" />
+    </svg>
+  )
+}
+
+function SimulationIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="feat-icon-svg" aria-hidden="true">
+      <path d="M9 3h6M10 3v6l-5.2 8.4A2.4 2.4 0 0 0 6.8 21h10.4a2.4 2.4 0 0 0 2-3.6L14 9V3" />
+      <path d="M8 15h8M10 12h4" />
+    </svg>
+  )
+}
+
 // ── Hero Living Intelligence Network Component ────────────────────────────────
 
 const HERO_NODES = [
@@ -878,6 +898,10 @@ function ProductPreview({ onOpenConsole }) {
           </button>
         </div>
 
+        <div className="preview-data-note">
+          Illustrative interface · sample values, not live surveillance output
+        </div>
+
         {/* Tab Navigation inside Preview */}
         <div className="preview-nav-tabs">
           <button
@@ -1017,62 +1041,86 @@ function ProductPreview({ onOpenConsole }) {
   )
 }
 
-// ── Features Section (3 Purposeful Cards) ─────────────────────────────────────
-
+// ── Features Section ──────────────────────────────────────────────────────────
 function FeatureCards() {
   return (
     <section className="features-section" id="features">
       <div className="section-header-block text-center">
-        <span className="section-kicker">CORE PLATFORM PRINCIPLES</span>
-        <h2 className="section-title">Signals, Not Speculation</h2>
+        <span className="section-kicker">ONE CONNECTED WORKSPACE</span>
+        <h2 className="section-title">From public reports to human review</h2>
         <p className="section-subtext">
-          Designed specifically to prevent premature alarms while giving epidemiologists the earliest credible head start.
+          Follow a potential signal from its first report through source checks, geographic context, and an analyst-led investigation.
         </p>
       </div>
 
       <div className="features-cards-grid">
-        {/* Card A */}
         <article className="feature-card">
           <div className="feature-icon-wrapper teal">
             <ShieldCheckIcon />
           </div>
-          <h3 className="feature-title">Signals, Not Speculation</h3>
+          <h3 className="feature-title">Live Intelligence</h3>
           <p className="feature-body">
-            Understand exactly why a pattern was flagged and what specific statistical or clinical evidence supports further investigation. We never guess infection counts.
+            Review incoming public-health bulletins with their publication details, location, and original source link in one searchable feed.
           </p>
           <div className="feature-highlight-row">
-            <span className="feature-tag">Transparent thresholds</span>
-            <span className="feature-tag">Evidence provenance</span>
+            <span className="feature-tag">Search and filter</span>
+            <span className="feature-tag">Source citations</span>
           </div>
         </article>
 
-        {/* Card B */}
         <article className="feature-card">
-          <div className="feature-icon-wrapper lavender">
-            <NetworkMeshIcon />
+          <div className="feature-icon-wrapper teal">
+            <SignalMapIcon />
           </div>
-          <h3 className="feature-title">Connected Intelligence</h3>
+          <h3 className="feature-title">Signal Monitoring</h3>
           <p className="feature-body">
-            Compare information across available sources to help reveal patterns that isolated reports might miss, while automatically flagging wire reprints to avoid echo chambers.
+            Explore reported signals geographically, inspect contributing evidence, and see where surveillance coverage may be limited.
           </p>
           <div className="feature-highlight-row">
-            <span className="feature-tag">De-syndication</span>
-            <span className="feature-tag">Cross-network corroboration</span>
+            <span className="feature-tag">Interactive map</span>
+            <span className="feature-tag">Evidence context</span>
           </div>
         </article>
 
-        {/* Card C */}
         <article className="feature-card">
           <div className="feature-icon-wrapper coral">
             <HumanDossierIcon />
           </div>
-          <h3 className="feature-title">Human-Reviewed Insights</h3>
+          <h3 className="feature-title">Alerts & Investigations</h3>
           <p className="feature-body">
-            Present potential warning signals with transparent data limitations and a clear review workflow. The system empowers human officers rather than substituting automated decisions.
+            Triage potential signal clusters, track review status, examine cited reports, and work through a practical investigation checklist.
           </p>
           <div className="feature-highlight-row">
-            <span className="feature-tag">Investigation checklists</span>
-            <span className="feature-tag">Audit trails</span>
+            <span className="feature-tag">Analyst-led review</span>
+            <span className="feature-tag">Evidence gaps</span>
+          </div>
+        </article>
+
+        <article className="feature-card">
+          <div className="feature-icon-wrapper lavender">
+            <SimulationIcon />
+          </div>
+          <h3 className="feature-title">Simulation Lab</h3>
+          <p className="feature-body">
+            Explore hypothetical scenarios with adjustable assumptions. Simulations are exploratory and are not validated forecasts of real-world outcomes.
+          </p>
+          <div className="feature-highlight-row">
+            <span className="feature-tag">What-if scenarios</span>
+            <span className="feature-tag">Assumptions visible</span>
+          </div>
+        </article>
+
+        <article className="feature-card">
+          <div className="feature-icon-wrapper teal">
+            <NetworkMeshIcon />
+          </div>
+          <h3 className="feature-title">Sources & Provenance</h3>
+          <p className="feature-body">
+            Compare independent reporting with syndicated copies, inspect adapter availability, and trace each publication back to its source.
+          </p>
+          <div className="feature-highlight-row">
+            <span className="feature-tag">Multi-source context</span>
+            <span className="feature-tag">Feed diagnostics</span>
           </div>
         </article>
       </div>
@@ -1118,7 +1166,7 @@ function FinalCTA({ onOpenConsole }) {
             Explore Epidemic Pulse →
           </button>
           <a className="cta-secondary-btn" href="#how-it-works">
-            See How It Works ↓
+            Explore Features ↓
           </a>
         </div>
 
@@ -1156,7 +1204,7 @@ function LandingFooter({ onOpenConsole }) {
           <a href="#signals-map">Interactive Signals Map</a>
           <a href="#how-it-works">How It Works</a>
           <a href="#intelligence">Intelligence Console</a>
-          <a href="#features">Design Principles</a>
+          <a href="#features">Platform Features</a>
         </div>
 
         <div className="footer-links-col">
@@ -1226,7 +1274,7 @@ function LandingNavbar({ onOpenConsole }) {
           <a href="#top" className="nav-link">Home</a>
           <a href="#how-it-works" className="nav-link">How It Works</a>
           <a href="#signals-map" className="nav-link">Intelligence</a>
-          <a href="#features" className="nav-link">Data Sources</a>
+          <a href="#features" className="nav-link">Features</a>
         </nav>
 
         {/* Right: Primary Action Button */}
@@ -1255,7 +1303,7 @@ function LandingNavbar({ onOpenConsole }) {
           <a href="#top" className="mobile-nav-item" onClick={() => setMobileMenuOpen(false)}>Home</a>
           <a href="#how-it-works" className="mobile-nav-item" onClick={() => setMobileMenuOpen(false)}>How It Works</a>
           <a href="#signals-map" className="mobile-nav-item" onClick={() => setMobileMenuOpen(false)}>Intelligence</a>
-          <a href="#features" className="mobile-nav-item" onClick={() => setMobileMenuOpen(false)}>Data Sources</a>
+          <a href="#features" className="mobile-nav-item" onClick={() => setMobileMenuOpen(false)}>Features</a>
           <button
             className="mobile-cta-btn"
             onClick={() => {
@@ -1291,20 +1339,19 @@ export default function RedesignedLandingPage({ onEnterDashboard }) {
               </div>
 
               <h1 className="hero-main-heading">
-                Every outbreak starts with a{' '}
-                <span className="highlight-signal">signal</span>.
+                Detect Signals. Understand Risk. Act Earlier.
               </h1>
 
               <p className="hero-supporting-copy">
-                Connect public health data, uncover emerging disease patterns, and investigate potential outbreak signals before they become harder to ignore.
+                EpidemicPulse aggregates public-health reports, groups potential signals, highlights evidence gaps, and supports human-led investigation.
               </p>
 
               <div className="hero-action-buttons-row">
                 <button className="hero-cta-primary" onClick={onEnterDashboard}>
                   Explore Intelligence →
                 </button>
-                <a className="hero-cta-secondary" href="#how-it-works">
-                  See How It Works ↓
+                <a className="hero-cta-secondary" href="#features">
+                  Explore Features ↓
                 </a>
               </div>
 
